@@ -79,7 +79,7 @@
           <div class="card-body">
             
             <ul class="list-group">
-              <li class="list-group-item" v-for="dominio in dominios" v-bind:key="dominio">
+              <li class="list-group-item" v-for="dominio in dominios" v-bind:key="dominio.nome">
                 <div class="row">
                   <div class="col-md">
                     {{dominio.nome}}
@@ -110,46 +110,46 @@ export default {
 	name: "app",
 	data(){
 		return{
-      prefixo: "",
-      sufixo: "",
+			prefixo: "",
+			sufixo: "",
 			prefixos: ["Air","Jet","Flight"],
 			sufixos:["Hub","Station","Mart"]
 		};  
 	},
 	methods:{
 		addSufixo(sufixo){
-      if(sufixo != ""){
-        this.sufixos.push(sufixo);
-        this.sufixo = "";
-      }
+			if(sufixo != ""){
+				this.sufixos.push(sufixo);
+				this.sufixo = "";
+			}
 		},
 		addPrefixo(prefixo){
-      if(prefixo != ""){
-        this.prefixos.push(prefixo);
-        this.prefixo = "";
-      }
-    },
-    deletePrefixo(prefixo){
-      this.prefixos.splice(this.prefixos.indexOf(prefixo),1);
-    },
-    deleteSufixo(sufixo){
-      this.sufixos.splice(this.sufixos.indexOf(sufixo),1);
-    }
-  },
-  computed:{
-    dominios(){
-      const dominios = [];
-      for(const prefixo of this.prefixos){
-        for(const sufixo of this.sufixos){
-          const nome = prefixo+sufixo;
-          const link = nome.toLowerCase();
-          const chekout = `https://checkout.hostgator.com.br/?a=add&sld=${link}&tld=.com.br`;
-          dominios.push({nome, chekout});
-        }
-      }
-      return dominios;
-    }
-  }
+			if(prefixo != ""){
+				this.prefixos.push(prefixo);
+				this.prefixo = "";
+			}
+		},
+		deletePrefixo(prefixo){
+			this.prefixos.splice(this.prefixos.indexOf(prefixo),1);
+		},
+		deleteSufixo(sufixo){
+			this.sufixos.splice(this.sufixos.indexOf(sufixo),1);
+		}
+	},
+	computed:{
+		dominios(){
+			const dominios = [];
+			for(const prefixo of this.prefixos){
+				for(const sufixo of this.sufixos){
+					const nome = prefixo+sufixo;
+					const link = nome.toLowerCase();
+					const chekout = `https://checkout.hostgator.com.br/?a=add&sld=${link}&tld=.com.br`;
+					dominios.push({nome, chekout});
+				}
+			}
+			return dominios;
+		}
+	}
 };
 </script>
 
