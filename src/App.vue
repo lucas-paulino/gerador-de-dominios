@@ -13,13 +13,13 @@
 <script>
 import "bootstrap/dist/css/bootstrap.css";
 import "font-awesome/css/font-awesome.css";
-import DominioList from "./components/DominioList"
+import DominioList from "./components/DominioList";
 
 export default {
 	name: "app",
-  components:{
-    DominioList
-  }
+	components:{
+		DominioList
+	}
 };
 </script>
 

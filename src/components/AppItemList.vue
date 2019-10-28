@@ -35,21 +35,21 @@
 export default {
 	name: "AppItemList",
 	props: ["title","items"],
-  data(){
-    return {
-      item:""
-    };
-  },
-  methods:{
-    addItem(item){
-      this.$emit("addItem", item);
-      this.item = "";
-    },
-    deleteItem(item){
-      this.$emit("deleteItem", item);
-    }
+	data(){
+		return {
+			item:""
+		};
+	},
+	methods:{
+		addItem(item){
+			this.$emit("addItem", item);
+			this.item = "";
+		},
+		deleteItem(item){
+			this.$emit("deleteItem", item);
+		}
 
-  }
+	}
 };
 </script>
 

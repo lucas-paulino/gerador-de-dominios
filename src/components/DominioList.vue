@@ -47,19 +47,17 @@
 </template>
 
 <script>
-import "bootstrap/dist/css/bootstrap.css";
-import "font-awesome/css/font-awesome.css";
-import AppItemList from "./AppItemList"
-
+import AppItemList from "./AppItemList";
+import axios from "axios/dist/axios";
 export default {
 	name: "app",
-  components:{
-    AppItemList
-  },
+	components:{
+		AppItemList
+	},
 	data(){
 		return{
-			prefixos: ["Air","Jet","Flight"],
-			sufixos:["Hub","Station","Mart"]
+			prefixos: [],
+			sufixos:[]
 		};  
 	},
 	methods:{
@@ -93,6 +91,35 @@ export default {
 			}
 			return dominios;
 		}
+	},
+	created(){
+		//console.log(axios);
+		axios({
+			url: "http://localhost:4000",
+			method: "post",
+			data: {
+				query:`
+				{
+					prefixos : itens(tipo:"prefixo"){
+						id
+						tipo
+						descricao
+					}
+					sufixos : itens(tipo:"sufixo"){
+						id
+						tipo
+						descricao
+					}
+				}
+
+				`
+			}
+		}).then(response => {
+			const query = response.data;
+			console.log(query);
+			this.prefixos = query.data.prefixos.map(item => item.descricao);
+			this.sufixos = query.data.sufixos.map(item => item.descricao);
+		});
 	}
 };
 </script>
