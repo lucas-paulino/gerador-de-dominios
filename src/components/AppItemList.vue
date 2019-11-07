@@ -43,9 +43,9 @@ export default {
 	methods:{
 		addItem(tipo, descricao){
 			this.$emit("addItem",{
-        tipo,
-        descricao
-      });
+				tipo,
+				descricao
+			});
 			this.descricao = "";
 		},
 		deleteItem(item){

@@ -1,6 +1,5 @@
 <template>
   <div>
-
     <div id="main">
       <div class="container">
 
@@ -26,18 +25,20 @@
             <ul class="list-group">
               <li class="list-group-item" v-for="dominio in dominios" v-bind:key="dominio.nome">
                 <div class="row">
-                  <div class="col-md">
-                    {{dominio.nome}}
-                  </div>
-                  <div class="col-md text-right">
-                    <a class="btn btn-info" v-bind:href="dominio.chekout" target="_blank">
-                      <span class="fa fa-shopping-cart"></span>
-                    </a>
-                  </div>
+					<div class="col-md-8">
+						{{dominio.nome}}
+					</div>
+					<div class="col-md-3 text-right">
+						<span class="badge badge-info">{{(dominio.disponivel)?"Disponível":"Não Disponível"}}</span>
+					</div>
+					<div class="col-md-1 text-right">
+						<a class="btn btn-info" v-bind:href="dominio.checkout" target="_blank">
+							<span class="fa fa-shopping-cart"></span>
+						</a>
+					</div>
                 </div>
               </li>
             </ul>
-            <br>
 
           </div>
         </div>
@@ -60,7 +61,8 @@ export default {
 			itens:{
 				prefixo: [],
 				sufixo:[]
-			}
+			},
+			dominios: []
 		};  
 	},
 	methods:{
@@ -85,27 +87,29 @@ export default {
 					const query = response.data;
 					const newItem = query.data.newItem;
 					this.itens[item.tipo].push(newItem);
+					this.gerarDominios();
 				});
 			}
 		},
 		deleteItem(item){
 			axios({
-					url: "http://localhost:4000",
-					method: "post",
-					data: {
-						query:`
+				url: "http://localhost:4000",
+				method: "post",
+				data: {
+					query:`
 							mutation ($id: Int){
 								deleted: deleteItem(id: $id)
 							}
 						`,
-						variables:{ id: item.id }
-					}
-				}).then(response => {
-					this.getItens(item.tipo);
-				});
+					variables:{ id: item.id }
+				}
+			}).then(() => {
+				this.itens[item.tipo].splice(this.itens[item.tipo].indexOf(item),1);
+				this.gerarDominios();
+			});
 		},
 		getItens(tipo){
-			axios({
+			return axios({
 				url: "http://localhost:4000",
 				method: "post",
 				data: {
@@ -124,25 +128,36 @@ export default {
 				const query = response.data;
 				this.itens[tipo] = query.data.itens;
 			});
-		}
-	},
-	computed:{
-		dominios(){
-			const dominios = [];
-			for(const prefixo of this.itens.prefixo){
-				for(const sufixo of this.itens.sufixo){
-					const nome = prefixo.descricao+sufixo.descricao;
-					const link = nome.toLowerCase();
-					const chekout = `https://checkout.hostgator.com.br/?a=add&sld=${link}&tld=.com.br`;
-					dominios.push({nome, chekout});
+		},
+		gerarDominios(){
+			axios({
+				url: "http://localhost:4000",
+				method: "post",
+				data: {
+					query:`
+						mutation{
+							dominios: gerarDominios{
+								nome
+								checkout
+								disponivel
+							}
+						}
+					`
 				}
-			}
-			return dominios;
+			}).then(response => {
+				const query = response.data;
+				this.dominios = query.data.dominios;
+			});
 		}
 	},
 	created(){
-		this.getItens("prefixo");
-		this.getItens("sufixo");
+		this.gerarDominios();
+		Promise.all([
+			this.getItens("prefixo"),
+			this.getItens("sufixo")	
+		]).then(()=>{
+			this.gerarDominios();
+		});
 	}
 };
 </script>
